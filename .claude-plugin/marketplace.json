@@ -1,0 +1,16 @@
+{
+  "name": "salesautopilot-plugin",
+  "owner": {
+    "name": "SalesAutopilot"
+  },
+  "metadata": {
+    "description": "SalesAutopilot email/SMS/DM marketing automation — MCP tools plus domain-knowledge skills"
+  },
+  "plugins": [
+    {
+      "name": "salesautopilot",
+      "source": "./salesautopilot",
+      "description": "SalesAutopilot MCP tools + domain-knowledge skills for lists, letters, forms, sends, actions, and segments"
+    }
+  ]
+}
