@@ -7,6 +7,6 @@
     "url": "https://www.salesautopilot.hu"
   },
   "homepage": "https://mcp.salesautopilot.com",
-  "repository": "https://github.com/salesautopilot/salesautopilot-plugin",
+  "repository": "https://github.com/salesautopilot/-salesautopilot-ai-skill",
   "keywords": ["email-marketing", "automation", "crm", "salesautopilot"]
 }

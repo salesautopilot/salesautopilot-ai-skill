@@ -8,8 +8,8 @@ A self-hosted Claude Code plugin marketplace for SalesAutopilot. Bundles:
 ## Install (Claude Code)
 
 ```
-/plugin marketplace add salesautopilot/salesautopilot-plugin
-/plugin install salesautopilot@salesautopilot-plugin
+/plugin marketplace add salesautopilot/-salesautopilot-ai-skill
+/plugin install salesautopilot@salesautopilot-ai-skill
 ```
 
 Restart Claude Code afterward so the bundled MCP server connects. You'll be prompted to sign in with your SalesAutopilot account (OAuth) on first use, same as the standalone connector.
