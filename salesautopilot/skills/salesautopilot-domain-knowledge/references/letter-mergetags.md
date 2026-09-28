@@ -77,6 +77,37 @@ first.
 
 Both HTML-letter-content only.
 
+## Per-subscriber link to a data-update form, double opt-in confirmation, or landing page
+
+This is a different thing from the "Merge tag syntax" note in SKILL.md (which covers `[mssys_firstname]`
+as an Action `fields` *value*) — this is an actual letter-content tag that inserts a
+**per-recipient personalized link** to a data-update form, a double opt-in confirmation, or a
+landing page.
+
+All three share the same shape: an opening/closing pair, with **three underscore-separated ids**
+inside the opening tag:
+
+```
+[update[LIST_ID_FORM_ID_[id]]]Text[/update]
+[dbloptin[LIST_ID_FORM_ID_[id]]]Text[/dbloptin]
+[lp[LIST_ID_LANDING_PAGE_ID_[id]]]Text[/lp]
+```
+
+- **1st part — `LIST_ID`**: the `nl_id` of the list the form/landing page belongs to
+  (`list_lists`/`get_list`).
+- **2nd part — `FORM_ID`** (for `update`/`dbloptin`) **or `LANDING_PAGE_ID`** (for `lp`): the
+  specific form (`list_forms`/`get_form`) or landing page (`list_landing_pages`/`get_landing_page`)
+  id.
+- **3rd part — literally `[id]`**: this is itself a merge tag standing for the subscriber's own id,
+  and is only substituted with the real numeric subscriber id at final render/send time. Always
+  write it as the literal text `[id]` — never substitute an actual subscriber id yourself; the
+  product fills in each recipient's own id automatically.
+
+Example: `[update[142_57_[id]]]Update your details[/update]`.
+
+An `href`-only variant (no closing tag) exists for `update`/`dbloptin`, same three underscore-joined
+parts: `///update/LIST_ID_FORM_ID_[id]` and `///dbloptin/LIST_ID_FORM_ID_[id]`.
+
 ## Article-of-the-noun helper
 
 `[a(z)]` — placed before another merge tag when the correct Hungarian definite article ("a" vs
@@ -93,8 +124,9 @@ for use inside an `href` attribute.
 ## Everything else — don't guess
 
 The product recognizes further tags (`[ordered_items_html]`, `[product_recommendation_...]`,
-`[creatives]`, `[segmentcountN]`, `[dateformat(...)]`, form-embedding tags, payment/CRM-integration
-tags, etc.) that are either integration-dependent (webshop, CRM, payment provider) or normally
-inserted by the editor UI rather than typed by hand. If a request needs one of these, ask what the
-user is trying to achieve and point them at the knowledge base / support rather than reproducing the
-exact syntax from memory.
+`[creatives]`, `[segmentcountN]`, `[dateformat(...)]`, `[form<ID>]`/`[updateform<ID>]` (embedded
+form), payment/CRM-integration tags, etc.) that are either integration-dependent (webshop, CRM,
+payment provider) or normally inserted by the editor UI rather than typed by hand. If a request
+needs one of these, ask what the user is trying to achieve and point them at the knowledge base /
+support rather than reproducing the exact syntax from memory. Note: `[msform<ID>]` no longer exists
+in the product — don't suggest it even though it may still appear in old letters.
