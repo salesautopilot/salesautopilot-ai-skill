@@ -8,7 +8,7 @@ A self-hosted Claude Code plugin marketplace for SalesAutopilot. Bundles:
 ## Install (Claude Code)
 
 ```
-/plugin marketplace add salesautopilot/-salesautopilot-ai-skill
+/plugin marketplace add salesautopilot/salesautopilot-ai-skill
 /plugin install salesautopilot@salesautopilot-ai-skill
 ```
 
