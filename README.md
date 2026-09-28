@@ -24,6 +24,7 @@ salesautopilot/
   skills/salesautopilot-domain-knowledge/
     SKILL.md
     references/mcp-tool-scope.md
+    references/letter-mergetags.md
 ```
 
 ## License
