@@ -113,6 +113,15 @@ When an Action's `update` type needs to copy a value from one list's field into 
 
 This is a different, narrower thing than the merge tags used *inside letter content* written through `create_letter`/`update_letter` (subscriber field personalization, unsubscribe links, a link to a previously sent letter, open tracking, etc.). Read `references/letter-mergetags.md` before writing or editing letter HTML/text content — don't improvise a personalization tag from a plausible-looking guess (e.g. `[FIRSTNAME]`, `[UNSUB_LINK]` are not real tags).
 
+## Deliverability best practices
+
+SalesAutopilot documents a specific set of minimum requirements to keep a legitimate, opt-in send
+out of spam/promotions folders (unsubscribe link, sender identification, own domain, SPF/DKIM/DMARC,
+own tracking subdomain, never sending to a purchased or long-unused list, testing with a spam
+checker, double opt-in). Read `references/deliverability-best-practices.md` and apply or suggest
+these whenever writing real, send-ready letter content through `create_letter`/`update_letter` — not
+for a throwaway draft the user is still iterating on.
+
 ## MCP scope — what's actually reachable
 
 The building blocks above are true regardless of interface, but **the SalesAutopilot MCP server (what Claude/ChatGPT actually call) exposes only a subset** of what SalesAutopilot as a product can do. Read `references/mcp-tool-scope.md` for the full, verified list of what each of the 57 MCP tools covers and — just as importantly — the specific things that look like they should exist but don't (e.g. there is no `delete_letter`, no `delete_send`, and critically **no `deactivate_send`** — once a send is activated through MCP there is no MCP-side undo, only the UI has one, which is exactly why `activate_send` is documented as needing explicit user confirmation before calling it).

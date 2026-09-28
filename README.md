@@ -25,6 +25,7 @@ salesautopilot/
     SKILL.md
     references/mcp-tool-scope.md
     references/letter-mergetags.md
+    references/deliverability-best-practices.md
 ```
 
 ## License
