@@ -1,19 +1,23 @@
 # SalesAutopilot MCP server — verified tool scope
 
-This is the authoritative, verified list of what the SalesAutopilot MCP server exposes (57 live tools, cross-checked against `mcp_server/tools.py` in the `mcp` repo — not the in-product AI Agent, which has a different, larger toolset). Grouped the same way the tools are documented; each group notes what's covered and, importantly, what's conspicuously *not* covered even though it exists as a product feature.
+This is the authoritative, verified list of what the SalesAutopilot MCP server exposes (72 live tools, cross-checked against `mcp_server/tools.py` in the `mcp` repo — not the in-product AI Agent, which has a different, larger toolset). Grouped the same way the tools are documented; each group notes what's covered and, importantly, what's conspicuously *not* covered even though it exists as a product feature.
 
 ## Campaign & Stats (5)
 `list_campaigns`, `get_campaign`, `search`, `fetch`, `echo_test`
 
 Read-only. `search`/`fetch` exist specifically for ChatGPT's connector-discovery convention (same data as `get_campaign`/`list_campaigns`).
 
-## Letters (4)
-`list_letters`, `get_letter`, `create_letter`, `update_letter`
+## Letters (5)
+`list_letters`, `get_letter`, `create_letter`, `update_letter`, `list_tracking_domains`
 
 **No `delete_letter`** — the underlying capability exists in the codebase but is deliberately not exposed via MCP (irreversible). If a user wants a letter gone, tell them to do it in the UI.
 
-## Folders — letter folders (3)
-`list_folders`, `create_folder`, `update_folder`
+`list_tracking_domains` is read-only: it returns the account's verified custom link-tracking domains plus the default domain `track.t.emesz.com`; pass one of the returned `domain` values as `link_tracking_domain` to `create_letter`/`update_letter` when link tracking is enabled.
+
+## Folders — project folders and letter folders (4)
+`list_folders`, `list_project_folders`, `create_folder`, `update_folder`
+
+`list_project_folders` (optionally filtered by name) returns the top-level project folders; use its IDs as `project_folder_id` in `create_list`. `list_folders`/`create_folder`/`update_folder` are about *letter* folders inside a project folder. There is no tool to create or edit project folders themselves.
 
 **No `delete_folder`.**
 
@@ -25,7 +29,7 @@ Read-only. `search`/`fetch` exist specifically for ChatGPT's connector-discovery
 ## Lists (5)
 `list_lists`, `list_list_fields`, `get_list_field`, `create_list_field`, `create_list`
 
-`create_list` always creates in the default project folder (`pf_id=0`); no tool moves a list between project folders.
+`create_list` takes a `project_folder_id` (0 = default folder); no tool moves a list between project folders. For ORDER lists it can copy the integration settings of another order list (`copy_integrations_from_list_id`).
 
 ## Subscribers (5)
 `list_subscribers`, `add_subscriber`, `get_subscriber`, `update_subscriber`, `send_letter_to_subscriber`
@@ -62,6 +66,11 @@ Read-only, needed to resolve IDs for `create_form`'s `shipping_method_ids` on or
 
 No delete tool for landing pages or landing page folders either.
 
+## Products (13)
+`list_products`, `get_product`, `create_product`, `update_product`, `list_product_categories`, `create_product_category`, `update_product_category`, `list_tax_classes`, `create_tax_class`, `update_tax_class`, `list_tax_rates`, `create_tax_rate`, `update_tax_rate`
+
+No delete tool for products, categories, tax classes or tax rates. Per-country VAT workflow: `create_tax_class` -> `create_tax_rate` (first rate becomes the default) -> `create_product(vat_type='tax_class')`; a tax class needs at least one rate and a default rate. `update_product` returns `labelReviewForms` (forms whose label was not renamed) to review with the user.
+
 ## Feedback (2)
 `request_feedback`, `submit_feedback`
 
@@ -74,7 +83,7 @@ These are real SalesAutopilot capabilities with zero MCP tool coverage — say s
 - **The Automation Builder** (multi-step chained workflows, including creating from a template) — see SKILL.md.
 - **Dashboard widgets.**
 - **Global variables.**
-- **Product catalog management / webshop sync** (creating products, syncing a connected webshop's catalog).
+- **Webshop catalog sync** (syncing a connected webshop's catalog). Products themselves, product categories, tax classes and tax rates ARE manageable through MCP — see "Products" above.
 - **CRM messages, tasks, and events.**
 - **Moving an existing list to a different project folder.**
 - Deleting: letters, letter folders, sends, subscribers, actions, segments (permanently — archiving is the closest available operation for segments only), lists.

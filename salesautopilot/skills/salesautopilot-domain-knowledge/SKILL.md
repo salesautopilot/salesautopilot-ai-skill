@@ -61,7 +61,7 @@ The top-level organizing unit is the **project folder** (`pf_id`, default `0`). 
 
 So: `project folder → (list | letter | landing page)`, with `letter → optional letter folder` and `landing page → optional landing page folder`, but never `list → subfolder`. Don't describe lists as "not organized into project folders" — every list has one, it just has no further subdivision beneath it.
 
-**MCP limitation**: `create_list` always creates the new list in the default (`pf_id=0`) project folder, and there's no MCP tool to move an existing list to a different project folder. If a user wants a list in a specific non-default project folder, say so plainly — they'll need to move it themselves in the UI afterward.
+**MCP note**: `create_list` takes a `project_folder_id` (0 = default folder), but there's no MCP tool to move an existing list to a different project folder afterwards. A new ORDER list has no integration settings (payment, billing, logistics): when creating one, ask the user whether to copy them from an existing order list and pass it as `copy_integrations_from_list_id`. Update forms and landing pages the source integrations refer to are not carried over.
 
 ## Send types
 
@@ -79,6 +79,14 @@ So: `project folder → (list | letter | landing page)`, with `letter → option
 ## New accounts already have a starting list
 
 Every newly registered SalesAutopilot account automatically gets one default subscriber list, already containing one subscriber: the person who registered, with their own name and email. **This list has no form attached to it yet.** Don't suggest "first, create a list" as a first step for a brand-new account — it already has one. The actual first gap is usually a form to attach to it.
+
+## Form thank-you page
+
+`create_form` / `update_form` generate a thank-you page automatically. Only set it when the user asks for something else:
+
+- **User gives their own thank-you page URL** → `thanks_page_type="URL"` + `thanks_page_url`. Visitors are forwarded there. Never put a JavaScript / meta-refresh redirect page into `thanks_text` for this. Merge tags in the URL are replaced URL-encoded, so data can be passed along (`?email=[email]`, on order forms the transaction number `?trnum=[mssys_trnum]`).
+- **An existing form or landing page of the account** → `thanks_page_type="FORM"` / `"LANDING_PAGE"` + `thanks_page_target_id` (find it with `list_forms` / `list_landing_pages`).
+- **Specific HTML** → `thanks_text`. Copying the *source* of one of the user's pages into the form (no forwarding) is `thanks_text_url` — only when the user explicitly asks; transaction data will not appear on a copied page unless its source contains merge tags.
 
 ## Data-update forms only work in a subscriber-specific context
 
@@ -103,9 +111,14 @@ For order-based segmentation (e.g. "customers who bought product X," "spent over
 
 ## Order forms (e-commerce)
 
-A product must exist in the account's product catalog before it can be used on an order form — there's no MCP tool to create products or sync a webshop catalog; that happens in the UI (automatic for Unas/Shoprenter integrations, manual otherwise).
+A product must exist in the account's product catalog before it can be used on an order form. Products can be created and edited through MCP (`create_product`, `update_product`; look them up with `list_products` / `get_product`), organized with product categories, and priced with one of two mutually exclusive VAT modes:
 
-`create_form` with `method="order"` requires: `shipping_method_ids` (call `list_shipping_methods` first if unknown), `order_type` (1=fixed single product, 2=selector, 3=quantity-based, 4=recurring subscription), and `products` (each needs `productId` or `sku`).
+- `vat_type="fixed"` — one flat VAT percent everywhere (`vat_rate`, plus `vat_name` if the rate is 0).
+- `vat_type="tax_class"` — VAT looked up per buyer country from a tax class's rate table (e.g. EU OSS cross-border sales). The class must exist and have at least one rate plus a default rate first: `create_tax_class` → `create_tax_rate` (the first rate of a class automatically becomes its default; one rate per country per class) → `create_product`.
+
+`update_product` is a **full replace** of the editable fields, not a partial patch — call `get_product` first. Its response may list `labelReviewForms`: order forms whose hand-edited label was not renamed along with the product; tell the user to review them. There is **no delete** for products, categories, tax classes or tax rates, and **no webshop catalog sync** (that happens in the UI — automatic for Unas/Shoprenter integrations, manual otherwise); a wrong tax rate is fixed with `update_tax_rate`.
+
+`create_form` with `method="order"` requires: `shipping_method_ids` (call `list_shipping_methods` first if unknown), `order_type` (1=fixed single product, 2=selector, 3=quantity-based, 4=recurring subscription), and `products` (each needs `productId` or `sku`). A product entry can be a checkbox upsell (order bump) via `orderBump: true`: not allowed with `order_type` 1, at least one product must not be a bump, it can't be combined with `defaultChecked`, and a bump product can be listed only once. The thank-you page defaults to an automatically generated one; use `thanks_page_type` `URL` / `FORM` / `LANDING_PAGE` (with `thanks_page_url` or `thanks_page_target_id`) to forward visitors elsewhere instead of writing a redirect into the page HTML.
 
 ## Merge tag syntax
 
@@ -124,6 +137,6 @@ for a throwaway draft the user is still iterating on.
 
 ## MCP scope — what's actually reachable
 
-The building blocks above are true regardless of interface, but **the SalesAutopilot MCP server (what Claude/ChatGPT actually call) exposes only a subset** of what SalesAutopilot as a product can do. Read `references/mcp-tool-scope.md` for the full, verified list of what each of the 57 MCP tools covers and — just as importantly — the specific things that look like they should exist but don't (e.g. there is no `delete_letter`, no `delete_send`, and critically **no `deactivate_send`** — once a send is activated through MCP there is no MCP-side undo, only the UI has one, which is exactly why `activate_send` is documented as needing explicit user confirmation before calling it).
+The building blocks above are true regardless of interface, but **the SalesAutopilot MCP server (what Claude/ChatGPT actually call) exposes only a subset** of what SalesAutopilot as a product can do. Read `references/mcp-tool-scope.md` for the full, verified list of what each of the 72 MCP tools covers and — just as importantly — the specific things that look like they should exist but don't (e.g. there is no `delete_letter`, no `delete_send`, and critically **no `deactivate_send`** — once a send is activated through MCP there is no MCP-side undo, only the UI has one, which is exactly why `activate_send` is documented as needing explicit user confirmation before calling it).
 
 Don't assume parity with any other SalesAutopilot AI surface (e.g. the in-product assistant) — it has a materially larger toolset (automation templates, dashboard widgets, letter folders, global variables, a `deactivate_send` undo path) that the MCP server does not have. When in doubt about whether something is possible through MCP specifically, check the reference file rather than assuming.
