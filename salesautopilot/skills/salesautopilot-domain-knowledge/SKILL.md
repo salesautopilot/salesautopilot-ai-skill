@@ -1,6 +1,6 @@
 ---
 name: salesautopilot-domain-knowledge
-description: Explains how SalesAutopilot's core building blocks (subscriber lists, letters, forms, sends/timings, actions, automations, segments, landing pages) relate to each other, and which of them the SalesAutopilot MCP server can actually touch. Use this whenever a request involves SalesAutopilot planning or troubleshooting — setting up a list, letter, form, send, segment, action, automation, or landing page; asking how these pieces fit together; or a result that looks wrong because of a mixed-up concept (e.g. "Action" vs "Automation", "why can't I delete this", "why didn't my email go out") — even when the user doesn't name a specific tool or use the word "SalesAutopilot" explicitly (e.g. "set up a welcome email sequence for new signups", "why is this automated email still sending after I stopped it").
+description: Explains how SalesAutopilot's core building blocks (subscriber lists, letters, forms, sends/timings, actions, automations, segments, landing pages) relate to each other, and which of them the SalesAutopilot MCP server can actually touch. Use this whenever a request involves SalesAutopilot planning or troubleshooting — setting up a list, letter, form, send, segment, action, automation, or landing page; asking how these pieces fit together; or a result that looks wrong because of a mixed-up concept (e.g. "Action" vs "Automation", "why can't I delete this", "why didn't my email go out") — even when the user doesn't name a specific tool or use the word "SalesAutopilot" explicitly (e.g. "set up a welcome email sequence for new signups", "why is this automated email still sending after I stopped it"). Hungarian terms: lista, levél, űrlap, időzítés/kiküldés, művelet, automatizmus, szegmens, landing page/landoló oldal, mezőkód.
 ---
 
 # SalesAutopilot Domain Knowledge
@@ -16,11 +16,11 @@ SalesAutopilot is an email/SMS/DM marketing automation platform. Its data model 
 | **List** (*Lista*) | Where subscribers live. Every send targets exactly one list. Keep separate lists for separate communication purposes (e.g. one per lead magnet, one per order flow) rather than cramming everything into one. |
 | **Letter** (*Levél*) | The content to be sent — Email, SMS, or DM (a PDF letter). A letter is reusable across multiple sends. |
 | **Form** (*Űrlap*) | The entry point subscribers/orders come in through, and also how existing subscribers update their own data. Always belongs to exactly one list. Three kinds: signup, data-update, order. Data-update forms only work when opened in a context already tied to a specific subscriber — see "Data-update forms" below. |
-| **Send / Timing** (*Időzítés*) | Configuration that says which list, which letter, what filter (optional), and when. See "Send types" below — "when" varies a lot. |
-| **Landing page** | Tied to one list. Can show that list's subscriber data back to them via a personalized link, or work as a plain standalone page (e.g. with an embedded signup form). |
+| **Send / Timing** (*Időzítés*, also *küldés* / *kiküldés*) | Configuration that says which list, which letter, what filter (optional), and when. See "Send types" below — "when" varies a lot. |
+| **Landing page** (*Landing page*, also *landoló oldal*) | Tied to one list. Can show that list's subscriber data back to them via a personalized link, or work as a plain standalone page (e.g. with an embedded signup form). |
 | **Action** (*Művelet*) | A single triggered step: on letter open/click, or on form submission (or personal landing-page-link click), do ONE of 5 things — see "Action types" below. **Not the same as Automation — see next section.** |
 | **Automation** (*Automatizmus*, Visual Automation Builder) | A multi-step chained process (Email → Wait → SMS → Event → ... ) triggered by a form submission or a date field. Built from templates or from scratch in a dedicated visual editor. **Not reachable through the SalesAutopilot MCP server at all — see MCP scope below.** |
-| **Segment** | A saved filter on a list's subscribers (by field values, engagement, or — for order-type lists — purchase history). Used to scope a send or a segment-conditioned Action. |
+| **Segment** (*Szegmens*) | A saved filter on a list's subscribers (by field values, engagement, or — for order-type lists — purchase history). Used to scope a send or a segment-conditioned Action. |
 
 ## The most common confusion: Action vs. Automation
 
@@ -121,6 +121,8 @@ A product must exist in the account's product catalog before it can be used on a
 `create_form` with `method="order"` requires: `shipping_method_ids` (call `list_shipping_methods` first if unknown), `order_type` (1=fixed single product, 2=selector, 3=quantity-based, 4=recurring subscription), and `products` (each needs `productId` or `sku`). A product entry can be a checkbox upsell (order bump) via `orderBump: true`: not allowed with `order_type` 1, at least one product must not be a bump, it can't be combined with `defaultChecked`, and a bump product can be listed only once. The thank-you page defaults to an automatically generated one; use `thanks_page_type` `URL` / `FORM` / `LANDING_PAGE` (with `thanks_page_url` or `thanks_page_target_id`) to forward visitors elsewhere instead of writing a redirect into the page HTML.
 
 ## Merge tag syntax
+
+Hungarian users call merge tags *mezőkód* — often just *kód* (e.g. "nem helyettesítődött be a kód" = a merge tag wasn't replaced).
 
 When an Action's `update` type needs to copy a value from one list's field into another (rather than a literal value), the field reference uses **square brackets**: `[mssys_firstname]` — not `{mssys_firstname}`.
 
