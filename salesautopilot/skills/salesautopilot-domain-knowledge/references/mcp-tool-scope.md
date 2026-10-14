@@ -1,6 +1,6 @@
 # SalesAutopilot MCP server — verified tool scope
 
-This is the authoritative, verified list of what the SalesAutopilot MCP server exposes (72 live tools, cross-checked against `mcp_server/tools.py` in the `mcp` repo — not the in-product AI Agent, which has a different, larger toolset). Grouped the same way the tools are documented; each group notes what's covered and, importantly, what's conspicuously *not* covered even though it exists as a product feature.
+This is the authoritative, verified list of what the SalesAutopilot MCP server exposes (80 live tools, cross-checked against `mcp_server/tools.py` in the `mcp` repo — not the in-product AI Agent, which has a different, larger toolset). Grouped the same way the tools are documented; each group notes what's covered and, importantly, what's conspicuously *not* covered even though it exists as a product feature.
 
 ## Campaign & Stats (5)
 `list_campaigns`, `get_campaign`, `search`, `fetch`, `echo_test`
@@ -41,8 +41,8 @@ Read-only. `search`/`fetch` exist specifically for ChatGPT's connector-discovery
 
 `delete_form_field` only removes a field from a form's *layout* — it does not delete the underlying list field or any subscriber data already collected. The only downstream effect is that future submissions through that form won't collect that field's value until it's re-added.
 
-## Actions (4)
-`create_action`, `list_actions`, `get_action`, `update_action`
+## Actions (12)
+`create_action_subscribe`, `create_action_unsubscribe`, `create_action_update`, `create_action_external`, `create_action_delete`, `update_action_subscribe`, `update_action_unsubscribe`, `update_action_update`, `update_action_external`, `update_action_delete`, `list_actions`, `get_action`
 
 Actions only — see the SKILL.md section on Action vs. Automation. **No `delete_action`** (no archive path for Actions either, unlike Segments) — the only way to remove one is through the UI.
 

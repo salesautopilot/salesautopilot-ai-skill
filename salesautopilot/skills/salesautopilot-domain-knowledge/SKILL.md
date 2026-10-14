@@ -35,7 +35,7 @@ The one thing Actions and multi-step sequencing *can* jointly achieve through MC
 
 ## Action types
 
-An Action (`create_action`/`update_action`) does exactly one of five things, set via `action_type`:
+An Action does exactly one of five things, and each type has its own tools (`create_action_subscribe`/`_unsubscribe`/`_update`/`_external`/`_delete` and the matching `update_action_<type>`):
 
 | Type | What it does | Extra required fields |
 |---|---|---|
@@ -49,7 +49,7 @@ Two more things every Action needs regardless of type:
 - **Trigger**: for a letter-attached Action, `letter_trigger` is required — `on_open`, `on_any_click`, or `on_link_click` (the last one also needs `link_urls`, specific URLs from that letter). A form-attached Action triggers on submission instead, no separate trigger field.
 - **`source_list_id`** (optional): which list the Action reads the contact's data *from* — omit/`0` for automatic, or fix it to a specific list.
 
-`subscribe`/`update`/`external` are safe, additive configuration. `unsubscribe` and `delete` configure something that will remove or unsubscribe a contact automatically, later, whenever the trigger fires — with no further confirmation at that moment. Since one Action can only be one type and a user might ask to change it later, don't assume a `create_action`/`update_action` call is automatically low-risk just because it "just sets something up" — check which `action_type` is actually being configured.
+`subscribe` and `external` only add the contact to a list or call a webhook. `update`, `unsubscribe` and `delete` configure something that will overwrite a contact's field values, unsubscribe them, or remove them automatically, later, whenever the trigger fires — with no further confirmation at that moment, which is why each is configured through its own tool. An Action's type cannot be changed after creation (each `update_action_<type>` tool refuses actions of another type); to change the type, create a new Action of the right type. Don't assume a create/update call is low-risk just because it "just sets something up" — check which type is being configured.
 
 ## Structural hierarchy — project folders
 
@@ -139,6 +139,6 @@ for a throwaway draft the user is still iterating on.
 
 ## MCP scope — what's actually reachable
 
-The building blocks above are true regardless of interface, but **the SalesAutopilot MCP server (what Claude/ChatGPT actually call) exposes only a subset** of what SalesAutopilot as a product can do. Read `references/mcp-tool-scope.md` for the full, verified list of what each of the 72 MCP tools covers and — just as importantly — the specific things that look like they should exist but don't (e.g. there is no `delete_letter`, no `delete_send`, and critically **no `deactivate_send`** — once a send is activated through MCP there is no MCP-side undo, only the UI has one, which is exactly why `activate_send` is documented as needing explicit user confirmation before calling it).
+The building blocks above are true regardless of interface, but **the SalesAutopilot MCP server (what Claude/ChatGPT actually call) exposes only a subset** of what SalesAutopilot as a product can do. Read `references/mcp-tool-scope.md` for the full, verified list of what each of the 80 MCP tools covers and — just as importantly — the specific things that look like they should exist but don't (e.g. there is no `delete_letter`, no `delete_send`, and critically **no `deactivate_send`** — once a send is activated through MCP there is no MCP-side undo, only the UI has one, which is exactly why `activate_send` is documented as needing explicit user confirmation before calling it).
 
 Don't assume parity with any other SalesAutopilot AI surface (e.g. the in-product assistant) — it has a materially larger toolset (automation templates, dashboard widgets, letter folders, global variables, a `deactivate_send` undo path) that the MCP server does not have. When in doubt about whether something is possible through MCP specifically, check the reference file rather than assuming.
