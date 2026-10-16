@@ -47,7 +47,7 @@ A „Csomag” sor azt mutatja, melyik csomagban érhető el a funkció; a köt�
 
 - **MCP – AI asszisztens integráció**
   - Csomag: ING, EM, AUT, ECO, FULL
-  - Csatlakoztasd Claude-ot vagy ChatGPT-t közvetlenül a SalesAutopilot fiókodhoz, és természetes nyelven irányítsd a rendszert: kérj kampánystatisztikákat, hozz létre emaileket, kezelj listákat vagy állíts be automatizálásokat anélkül, hogy a felületen kattintgatnál. Az MCP-integráció 26 eszközt kínál 8 funkciócsoportban.
+  - Csatlakoztasd Claude-ot vagy ChatGPT-t közvetlenül a SalesAutopilot fiókodhoz, és természetes nyelven irányítsd a rendszert: kérj kampánystatisztikákat, hozz létre emaileket, kezelj listákat vagy állíts be automatizálásokat anélkül, hogy a felületen kattintgatnál. Az MCP-integráció 80 eszközt kínál 8 funkciócsoportban.
 - **AI szegmens adat elemzés**
   - Csomag: ING, EM, AUT, ECO, FULL
   - Elemezd bármely szegmensed adatait közvetlenül a SalesAutopilotból: válaszd ki a mezőket, fogalmazd meg, mit szeretnél vizsgálni, és az AI másodpercek alatt feltárja a legfontosabb összefüggéseket. Használd új kampánystratégiák, tartalmak vagy optimalizálási lehetőségek megtalálásához – adatelemző nélkül.
@@ -506,6 +506,9 @@ A „Csomag” sor azt mutatja, melyik csomagban érhető el a funkció; a köt�
 - **Csomagpont-választó integráció megrendelő űrlapokon**
   - Csomag: ING, ECO, FULL
   - Vásárlóid a rendelési folyamatban térképről vagy kereséssel választhatnak csomagpontot (Foxpost, GLS, MPL PostaPont, Pick Pack Pont by SAMEDAY, Packeta) – a szállítási cím automatikusan kitöltődik.
+- **Rendelésexport futárszolgálatoknak**
+  - Csomag: ECO, FULL
+  - Töltsd le megrendeléseid adatait egy kattintással a futárszolgálat formátumában (GLS, MPL, Complexpress, Pick Pack Pont by SAMEDAY), és importáld be a futárszolgálat rendszerébe – nincs kézi adatbevitel.
 - **Fulfilment integráció (Boxy, Webshippy)**
   - Csomag: ING, ECO, FULL
   - Add át megrendeléseid automatikusan fulfillment partnernek (Webshippy, Boxy), aki elvégzi a raktározást, csomagolást és kiszállítást – a státuszok visszaszinkronizálódnak a rendszerbe.
