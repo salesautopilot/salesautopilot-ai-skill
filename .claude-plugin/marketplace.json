@@ -10,7 +10,7 @@
     {
       "name": "salesautopilot",
       "source": "./salesautopilot",
-      "description": "SalesAutopilot MCP tools + domain-knowledge skills for lists, letters, forms, sends, actions, and segments"
+      "description": "SalesAutopilot MCP tools + domain-knowledge skills for lists, letters, forms, sends, actions, and segments, plus the full feature catalog"
     }
   ]
 }
