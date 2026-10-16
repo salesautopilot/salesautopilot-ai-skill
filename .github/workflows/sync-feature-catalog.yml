@@ -17,11 +17,11 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Regenerate catalog
         run: node scripts/sync-feature-catalog.mjs
@@ -37,18 +37,18 @@ jobs:
       - name: Bump plugin patch version
         if: steps.diff.outputs.changed == 'true'
         run: |
+          # Rewrites only the version string so the hand-formatted manifest keeps its layout.
           node -e '
             const fs = require("fs");
             const file = "salesautopilot/.claude-plugin/plugin.json";
-            const plugin = JSON.parse(fs.readFileSync(file, "utf8"));
-            const [major, minor, patch] = plugin.version.split(".").map(Number);
-            plugin.version = `${major}.${minor}.${patch + 1}`;
-            fs.writeFileSync(file, JSON.stringify(plugin, null, 2) + "\n");
+            const source = fs.readFileSync(file, "utf8");
+            fs.writeFileSync(file, source.replace(/("version":\s*")(\d+)\.(\d+)\.(\d+)"/,
+              (_, prefix, major, minor, patch) => `${prefix}${major}.${minor}.${Number(patch) + 1}"`));
           '
 
       - name: Open pull request
         if: steps.diff.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: sync/feature-catalog
           delete-branch: true
