@@ -1,0 +1,51 @@
+name: Release zips
+
+# Publishes the plugin and per-skill zips as assets of the GitHub release v<plugin version>, so
+# claude.ai users can always download the current files from
+# https://github.com/salesautopilot/salesautopilot-ai-skill/releases/latest/download/<file>.zip
+#
+# Also called by sync-feature-catalog.yml: its bot commit is pushed with GITHUB_TOKEN, and such
+# pushes never trigger other workflows, so the push trigger below would not fire for it.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'salesautopilot/**'
+      - 'scripts/build-zips.sh'
+      - '.github/workflows/release.yml'
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # Explicit ref: when called right after the sync job pushed, the triggering SHA is the
+      # commit *before* the catalog update.
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - name: Build zips
+        run: bash scripts/build-zips.sh
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="$(node -p 'require("./salesautopilot/.claude-plugin/plugin.json").version')"
+          tag="v$version"
+          if ! gh release view "$tag" > /dev/null 2>&1; then
+            gh release create "$tag" --target "$(git rev-parse HEAD)" --title "$tag" \
+              --notes "SalesAutopilot plugin $version. Download links: see README → Install (claude.ai)."
+          fi
+          # A push that changed files without bumping the version refreshes the same release.
+          gh release upload "$tag" dist/*.zip --clobber

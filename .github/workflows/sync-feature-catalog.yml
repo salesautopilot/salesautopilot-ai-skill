@@ -1,8 +1,9 @@
 name: Sync feature catalog
 
-# Pulls the "Funkciók" Webflow CMS collection and opens a PR when the generated catalog changed.
-# Requires the WEBFLOW_API_TOKEN repository secret (a Webflow site token with cms:read scope) and
-# "Allow GitHub Actions to create and approve pull requests" enabled in Settings → Actions → General.
+# Pulls the "Funkciók" Webflow CMS collection and commits the regenerated catalog straight to main
+# when it changed. No PR review step: the catalog only contains text already public on
+# salesautopilot.hu, and the internal "Háttérinformációk" field is never exported.
+# Requires the WEBFLOW_API_TOKEN repository secret (a Webflow site token with cms:read scope).
 
 on:
   schedule:
@@ -11,11 +12,12 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
     steps:
       - uses: actions/checkout@v5
 
@@ -46,15 +48,17 @@ jobs:
               (_, prefix, major, minor, patch) => `${prefix}${major}.${minor}.${Number(patch) + 1}"`));
           '
 
-      - name: Open pull request
+      - name: Commit and push to main
         if: steps.diff.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v8
-        with:
-          branch: sync/feature-catalog
-          delete-branch: true
-          commit-message: Sync feature catalog from Webflow CMS
-          title: Sync feature catalog from Webflow CMS
-          body: |
-            Automated update of `salesautopilot/skills/salesautopilot-feature-catalog/references/feature-catalog.md` from the Webflow "Funkciók" collection, plus a plugin patch version bump.
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Sync feature catalog from Webflow CMS"
+          git push origin HEAD:main
 
-            Review before merging: the repository is public, so check that no internal-only text slipped into the CMS tooltips or package notes.
+  release:
+    needs: sync
+    if: needs.sync.outputs.changed == 'true'
+    uses: ./.github/workflows/release.yml
+    permissions:
+      contents: write

@@ -15,6 +15,19 @@ A self-hosted Claude Code plugin marketplace for SalesAutopilot. Bundles:
 
 Restart Claude Code afterward so the bundled MCP server connects. You'll be prompted to sign in with your SalesAutopilot account (OAuth) on first use, same as the standalone connector.
 
+## Install (claude.ai / Claude desktop app)
+
+Download the skill zips (always the latest version):
+
+- [salesautopilot-feature-catalog.zip](https://github.com/salesautopilot/salesautopilot-ai-skill/releases/latest/download/salesautopilot-feature-catalog.zip)
+- [salesautopilot-domain-knowledge.zip](https://github.com/salesautopilot/salesautopilot-ai-skill/releases/latest/download/salesautopilot-domain-knowledge.zip)
+
+Then in Claude: **Settings → Capabilities → Skills → Upload skill**, once per zip ("Code execution and file creation" must be enabled). Also enable the **SalesAutopilot** connector under **Settings → Connectors** — the skills use it to look at your account.
+
+Uploaded skills don't update themselves: download and upload again to get a newer feature catalog.
+
+**Team / Enterprise admins** can instead upload the whole plugin for the organization: [salesautopilot-plugin.zip](https://github.com/salesautopilot/salesautopilot-ai-skill/releases/latest/download/salesautopilot-plugin.zip).
+
 ## What's in here
 
 ```
@@ -31,16 +44,20 @@ salesautopilot/
     SKILL.md
     references/feature-catalog.md   — GENERATED, do not edit by hand
 scripts/sync-feature-catalog.mjs  — regenerates feature-catalog.md from the Webflow CMS
+scripts/build-zips.sh             — builds the plugin and per-skill zips into dist/
+.github/workflows/
+  sync-feature-catalog.yml        — weekly catalog sync, commits to main
+  release.yml                     — publishes the zips as release v<plugin version>
 ```
 
 ## Updating the feature catalog
 
 `feature-catalog.md` is generated from the "Funkciók" collection of the salesautopilot.hu Webflow CMS. Edit the features in Webflow, never the file.
 
-- **Automatically:** the `Sync feature catalog` GitHub Action runs every Monday (or on demand from the Actions tab), and opens a PR with the regenerated file and a plugin patch version bump when something changed. It needs the `WEBFLOW_API_TOKEN` repository secret (Webflow site token, `cms:read` scope) and "Allow GitHub Actions to create and approve pull requests" enabled.
+- **Automatically:** the `Sync feature catalog` GitHub Action runs every Monday (or on demand from the Actions tab), and when something changed it commits the regenerated file and a plugin patch version bump straight to `main`, then publishes new release zips. It needs the `WEBFLOW_API_TOKEN` repository secret (Webflow site token, `cms:read` scope).
 - **Locally:** `WEBFLOW_API_TOKEN=... node scripts/sync-feature-catalog.mjs` (Node 20+, no dependencies).
 
-Only published CMS items are included, and the internal "Háttérinformációk" field is never exported.
+Any other change under `salesautopilot/` pushed to `main` also refreshes the release zips (bump the version in `plugin.json` to publish it as a new release). Only published CMS items are included, and the internal "Háttérinformációk" field is never exported.
 
 ## License
 
