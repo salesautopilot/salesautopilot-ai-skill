@@ -1,6 +1,6 @@
 # SalesAutopilot MCP server — verified tool scope
 
-This is the authoritative, verified list of what the SalesAutopilot MCP server exposes (80 live tools, cross-checked against `mcp_server/tools.py` in the `mcp` repo — not the in-product AI Agent, which has a different, larger toolset). Grouped the same way the tools are documented; each group notes what's covered and, importantly, what's conspicuously *not* covered even though it exists as a product feature.
+This is the authoritative, verified list of what the SalesAutopilot MCP server exposes (81 live tools, cross-checked against `mcp_server/tools.py` in the `mcp` repo — not the in-product AI Agent, which has a different, larger toolset). Grouped the same way the tools are documented; each group notes what's covered and, importantly, what's conspicuously *not* covered even though it exists as a product feature.
 
 ## Campaign & Stats (5)
 `list_campaigns`, `get_campaign`, `search`, `fetch`, `echo_test`
@@ -70,6 +70,11 @@ No delete tool for landing pages or landing page folders either.
 `list_products`, `get_product`, `create_product`, `update_product`, `list_product_categories`, `create_product_category`, `update_product_category`, `list_tax_classes`, `create_tax_class`, `update_tax_class`, `list_tax_rates`, `create_tax_rate`, `update_tax_rate`
 
 No delete tool for products, categories, tax classes or tax rates. Per-country VAT workflow: `create_tax_class` -> `create_tax_rate` (first rate becomes the default) -> `create_product(vat_type='tax_class')`; a tax class needs at least one rate and a default rate. `update_product` returns `labelReviewForms` (forms whose label was not renamed) to review with the user.
+
+## Feature catalog (1)
+`get_feature_catalog`
+
+Read-only, account-independent: the official feature list from salesautopilot.hu with package availability, optionally filtered by `group`, `package` or `query`. It is the always-current source behind the salesautopilot-feature-catalog skill — prefer it over the skill's bundled snapshot. It says what the product offers, not what this MCP server can do; this file remains the reference for that.
 
 ## Feedback (2)
 `request_feedback`, `submit_feedback`

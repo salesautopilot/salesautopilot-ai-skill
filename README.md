@@ -24,7 +24,7 @@ Download the skill zips (always the latest version):
 
 Then in Claude: **Settings → Capabilities → Skills → Upload skill**, once per zip ("Code execution and file creation" must be enabled). Also enable the **SalesAutopilot** connector under **Settings → Connectors** — the skills use it to look at your account.
 
-Uploaded skills don't update themselves: download and upload again to get a newer feature catalog.
+Uploaded skills don't update themselves: download and upload again to get a newer feature catalog. With the SalesAutopilot connector enabled, the skill reads the always-current catalog through the connector's `get_feature_catalog` tool instead, so an outdated upload only matters without the connector.
 
 **Team / Enterprise admins** can instead upload the whole plugin for the organization: [salesautopilot-plugin.zip](https://github.com/salesautopilot/salesautopilot-ai-skill/releases/latest/download/salesautopilot-plugin.zip).
 

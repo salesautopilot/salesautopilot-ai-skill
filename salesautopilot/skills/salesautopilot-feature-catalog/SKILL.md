@@ -5,13 +5,24 @@ description: The full, official SalesAutopilot feature list (the same one shown 
 
 # SalesAutopilot Feature Catalog
 
+## Where to read the catalog
+
+**Prefer the `get_feature_catalog` tool of the SalesAutopilot MCP server whenever it is connected.** It serves the same list, always current (the bundled file below is only a snapshot from when this skill was installed), and filters it so you don't have to load the whole file:
+
+- No arguments → package codes, the "Áttekintés" overview and the list of feature groups (~4 KB). Start here.
+- `group` (part of a `## ` heading, accents optional, e.g. `"webshop"`), `package` (`ING`/`EM`/`AUT`/`ECO`/`FULL`) and/or `query` (words that must all occur in a feature's name or description) → the matching features with description and link.
+
+Fall back to `references/feature-catalog.md` only when the MCP server isn't connected (or the tool fails), and then say the list may be slightly out of date.
+
+## What the catalog contains
+
 `references/feature-catalog.md` is the complete public feature list of SalesAutopilot, generated from the website's CMS. It is in Hungarian, grouped into ~23 feature groups (`## ` headings), and every feature carries:
 
 - **Csomag** — the packages that include it (`ING` Ingyenes, `EM` Email Marketing, `AUT` Automatizálás, `ECO` Ecommerce, `FULL` Mindent Bele), plus per-package notes such as a trial period, an API-call quota or an extra fee.
 - A short marketing description of what it does and why it's useful.
 - Sometimes a **Bővebben** link to a longer article on salesautopilot.hu.
 
-The file is large (~85 KB). Start with the "Áttekintés" table at the top and the list of `## ` headings, then read only the groups relevant to the user's business instead of loading everything.
+The file is large (~85 KB). Start with the "Áttekintés" table at the top and the list of `## ` headings, then read only the groups relevant to the user's business instead of loading everything — with the MCP tool, call it once without arguments, then with `group` for the relevant groups.
 
 ## "How do I get the most out of my account?"
 
