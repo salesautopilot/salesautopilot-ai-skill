@@ -1,6 +1,6 @@
 # SalesAutopilot MCP server — verified tool scope
 
-This is the authoritative, verified list of what the SalesAutopilot MCP server exposes (81 live tools, cross-checked against `mcp_server/tools.py` in the `mcp` repo — not the in-product AI Agent, which has a different, larger toolset). Grouped the same way the tools are documented; each group notes what's covered and, importantly, what's conspicuously *not* covered even though it exists as a product feature.
+This is the authoritative, verified list of what the SalesAutopilot MCP server exposes (86 live tools, cross-checked against `mcp_server/tools.py` in the `mcp` repo — not the in-product AI Agent, which has a different, larger toolset). Grouped the same way the tools are documented; each group notes what's covered and, importantly, what's conspicuously *not* covered even though it exists as a product feature.
 
 ## Campaign & Stats (5)
 `list_campaigns`, `get_campaign`, `search`, `fetch`, `echo_test`
@@ -21,13 +21,17 @@ Read-only. `search`/`fetch` exist specifically for ChatGPT's connector-discovery
 
 **No `delete_folder`.**
 
-## Sends / Timings (6)
-`list_sends`, `create_send`, `get_send`, `update_send`, `send_test_emails`, `activate_send`
+## Sends / Timings (7)
+`list_sends`, `create_send`, `get_send`, `update_send`, `send_test_emails`, `activate_send`, `copy_send_targeting`
 
-**No `delete_send`. No `deactivate_send`.** This second gap matters a lot: the in-product AI Agent has `deactivate_send` and is explicitly told "activation is NOT irreversible, you can always deactivate" — that's not true through MCP. Once a send is activated via this MCP server, there is no MCP-side way to stop it; only the SalesAutopilot UI can. This is exactly why `activate_send` carries `destructiveHint: true` and its tool description mandates asking the user for explicit confirmation before calling it — treat that requirement as load-bearing, not boilerplate.
+`copy_send_targeting` copies the custom conditions and/or the segment filter of one send onto another send of the same list, overwriting the target's own — `get_send`/`update_send` alone cannot do this (they expose no conditions and drop segment negation).
 
-## Lists (5)
-`list_lists`, `list_list_fields`, `get_list_field`, `create_list_field`, `create_list`
+**No `delete_send`. No `deactivate_send`.** This second gap matters a lot: the in-product AI Agent has `deactivate_send` and is explicitly told "activation is NOT irreversible, you can always deactivate" — that's not true through MCP. Once a send is activated via this MCP server, there is no MCP-side way to stop it; only the SalesAutopilot UI can. This is exactly why `activate_send`'s tool description opens with "IRREVERSIBLE" and mandates asking the user for explicit confirmation (with a fixed confirmation sentence) before calling it. Its annotations are `destructiveHint: false` (activation adds a send, it doesn't delete or overwrite data) and `openWorldHint: true` (it emails real recipients), so the client's own destructive-action prompt may not fire — the description's confirmation rule is the safeguard — treat that requirement as load-bearing, not boilerplate.
+
+## Lists (7)
+`list_lists`, `list_list_fields`, `get_list_field`, `create_list_field`, `create_list`, `get_list_integrations`, `copy_openai_integration`
+
+`get_list_integrations` only tells whether a list has its OpenAI integration (API key) set up and links the list's integrations screen — it never returns a key. Integration credentials themselves are entered only in the SalesAutopilot UI, never through MCP or the chat; `copy_openai_integration` copies an existing OpenAI key from another list of the account server side (ask the user to confirm first).
 
 `create_list` takes a `project_folder_id` (0 = default folder); no tool moves a list between project folders. For ORDER lists it can copy the integration settings of another order list (`copy_integrations_from_list_id`).
 
@@ -41,8 +45,10 @@ Read-only. `search`/`fetch` exist specifically for ChatGPT's connector-discovery
 
 `delete_form_field` only removes a field from a form's *layout* — it does not delete the underlying list field or any subscriber data already collected. The only downstream effect is that future submissions through that form won't collect that field's value until it's re-added.
 
-## Actions (12)
-`create_action_subscribe`, `create_action_unsubscribe`, `create_action_update`, `create_action_external`, `create_action_delete`, `update_action_subscribe`, `update_action_unsubscribe`, `update_action_update`, `update_action_external`, `update_action_delete`, `list_actions`, `get_action`
+## Actions (14)
+`create_action_subscribe`, `create_action_unsubscribe`, `create_action_update`, `create_action_external`, `create_action_delete`, `create_action_ai_prompt`, `update_action_subscribe`, `update_action_unsubscribe`, `update_action_update`, `update_action_external`, `update_action_delete`, `update_action_ai_prompt`, `list_actions`, `get_action`
+
+AI Prompt actions (`create_action_ai_prompt` / `update_action_ai_prompt`) are buildable through MCP; the one part that stays in the UI is entering the OpenAI API key on the source list's integrations screen (see SKILL.md, "AI Prompt actions"). The other action types of the editor screen (tasks, tickets, recurring-payment and ElevenLabs actions) are still UI-only.
 
 Actions only — see the SKILL.md section on Action vs. Automation. **No `delete_action`** (no archive path for Actions either, unlike Segments) — the only way to remove one is through the UI.
 
