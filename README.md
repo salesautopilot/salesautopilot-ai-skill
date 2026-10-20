@@ -34,6 +34,7 @@ Uploaded skills don't update themselves: download and upload again to get a newe
 .claude-plugin/marketplace.json   — marketplace manifest
 salesautopilot/
   .claude-plugin/plugin.json      — plugin manifest
+  README.md, LICENSE              — required by the Claude plugin directory (plugin folder is what gets listed)
   .mcp.json                       — points at the live MCP server
   skills/salesautopilot-domain-knowledge/
     SKILL.md
