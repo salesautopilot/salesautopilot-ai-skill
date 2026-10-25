@@ -1,6 +1,6 @@
 # SalesAutopilot MCP server — verified tool scope
 
-This is the authoritative, verified list of what the SalesAutopilot MCP server exposes (86 live tools, cross-checked against `mcp_server/tools.py` in the `mcp` repo — not the in-product AI Agent, which has a different, larger toolset). Grouped the same way the tools are documented; each group notes what's covered and, importantly, what's conspicuously *not* covered even though it exists as a product feature.
+This is the authoritative, verified list of what the SalesAutopilot MCP server exposes (87 live tools, cross-checked against `mcp_server/tools.py` in the `mcp` repo — not the in-product AI Agent, which has a different, larger toolset). Grouped the same way the tools are documented; each group notes what's covered and, importantly, what's conspicuously *not* covered even though it exists as a product feature.
 
 ## Campaign & Stats (5)
 `list_campaigns`, `get_campaign`, `search`, `fetch`, `echo_test`
@@ -40,8 +40,10 @@ Read-only. `search`/`fetch` exist specifically for ChatGPT's connector-discovery
 
 **No `delete_subscriber`.** `send_letter_to_subscriber` fires an immediate, real send to one subscriber, bypassing the send's own schedule/active-state — irreversible in effect (a real email goes out), hence its own confirmation requirement.
 
-## Forms (7)
-`list_forms`, `create_form`, `update_form`, `get_form`, `get_form_fields`, `add_form_fields`, `delete_form_field`
+## Forms (8)
+`list_forms`, `list_form_templates`, `create_form`, `update_form`, `get_form`, `get_form_fields`, `add_form_fields`, `delete_form_field`
+
+`list_form_templates` resolves a template the user names ("my Black Friday template") to the `template_id` that `create_form`/`update_form` take; filter with `search` (name fragment) or `category` (`own`, `modern`, `multi-block`, `legacy`), and ask the user when several match. The same ID is shown on every template card in the app, so users may also give it directly. `get_form` returns the form's `templateId`, so an existing form's design can be reused.
 
 `delete_form_field` only removes a field from a form's *layout* — it does not delete the underlying list field or any subscriber data already collected. The only downstream effect is that future submissions through that form won't collect that field's value until it's re-added.
 
